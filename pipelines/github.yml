@@ -1,0 +1,30 @@
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: Migration
+    steps:
+      - uses: actions/checkout@master
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - name: Install pg-migrate
+        run: yarn global add @urbica/pg-migrate
+      - name: Migrate dev
+        env:
+          SUPABASE_HOST: ${{ secrets.SUPABASE_HOST_DEV }}
+          SUPABASE_PASSWORD: ${{ secrets.SUPABASE_PASSWORD_DEV }}
+          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL_DEV }}
+          WEBHOOK_SECRET: ${{ secrets.WEBHOOK_SECRET_DEV }}
+        run: ./migrate.sh
+      - name: Migrate prod
+        env:
+          SUPABASE_HOST: ${{ secrets.SUPABASE_HOST_PROD }}
+          SUPABASE_PASSWORD: ${{ secrets.SUPABASE_PASSWORD_PROD }}
+          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL_PROD }}
+          WEBHOOK_SECRET: ${{ secrets.WEBHOOK_SECRET_PROD }}
+        run: ./migrate.sh migrate

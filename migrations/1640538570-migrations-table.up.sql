@@ -1,0 +1,2 @@
+ALTER TABLE public.migrations
+    ENABLE ROW LEVEL SECURITY;
